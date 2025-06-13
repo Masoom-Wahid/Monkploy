@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: monkploy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.dev
+    command: sh -c "air"
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monkploy-worker
+    env_file:
+      - .env.dev
+    command: sh -c "go run workers/worker.go"
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+
+  db:
+    image: postgres:15
+    container_name: monkploy-db
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: monkploy-redis
+    ports:
+      - '6378:6379'
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: monkploy-rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+volumes:
+  db-data:
