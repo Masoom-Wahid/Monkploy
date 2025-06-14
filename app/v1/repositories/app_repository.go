@@ -10,6 +10,7 @@ import (
 type AppRepository interface {
 	List() ([]models.App, error)
 	Create(app *models.App) *gorm.DB
+	Delete(id string) bool
 }
 
 type appRepository struct {
@@ -30,5 +31,12 @@ func (r *appRepository) Create(app *models.App) *gorm.DB {
 	db := database.GetDB()
 
 	return db.Model(&models.App{}).Create(app)
+}
 
+func (r *appRepository) Delete(id string) bool {
+	db := database.GetDB()
+
+	result := db.Where("id = ?", id).Delete(&models.App{})
+
+	return result.RowsAffected > 0
 }

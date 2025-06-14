@@ -10,4 +10,5 @@ import (
 func setupAppRoutes(route *gin.RouterGroup, appController controllers.AppController, ms middlewares.MiddlewareSupplier) {
 	route.GET("/apps", appController.List)
 	route.POST("/apps", appController.Create)
+	route.DELETE("/apps/:id", appController.Delete)
 }

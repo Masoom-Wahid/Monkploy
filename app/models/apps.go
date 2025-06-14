@@ -9,8 +9,7 @@ import (
 )
 
 type App struct {
-	ID          uint64         `gorm:"primaryKey" json:"id,omitempty"`
-	UUID        uuid.UUID      `gorm:"type:uuid;not null;uniqueIndex" json:"uuid,omitempty"`
+	ID        uuid.UUID      `gorm:"primaryKey" json:"id,omitempty"`
 	Name        string         `gorm:"not null" json:"name,omitempty"`
 	Description string         `gorm:"type:text" json:"description,omitempty"`
 
@@ -21,7 +20,7 @@ type App struct {
 
 
 func (app *App) BeforeCreate(tx *gorm.DB) (err error) {
-	app.UUID = uuid.New()
+	app.ID = uuid.New()
 	return
 }
 

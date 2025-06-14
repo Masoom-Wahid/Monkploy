@@ -5,8 +5,6 @@ import (
 	"platform/app/v1/repositories"
 	"platform/config"
 	"platform/database"
-	"platform/database/migrations"
-	"platform/database/seeder"
 	"platform/middlewares"
 	"platform/pkg/env"
 	"platform/routes"
@@ -56,12 +54,6 @@ func (app *App) Run() {
 	// r.LoadHTMLGlob("./views/dist/*.html")
 
 	r.Use(middlewares.CORSMiddleware())
-	if app.Config.AppConfig().Env == "development" {
-		migrations.Migrate(app.Database)
-
-		seederSupplier := seeder.NewSeederSupplier()
-		seederSupplier.Run()
-	}
 
 	// r.NoRoute(func(c *gin.Context) {
 	// 	c.HTML(200, "index.html", nil)

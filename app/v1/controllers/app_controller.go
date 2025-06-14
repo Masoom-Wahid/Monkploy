@@ -13,20 +13,21 @@ import (
 type AppController interface {
 	List(ctx *gin.Context)
 	Create(ctx *gin.Context)
+	Delete(ctx *gin.Context)
 }
 
 type appController struct {
-	appRepo repositories.RepoSupplier
+	repoSupplier repositories.RepoSupplier
 }
 
 func NewAppController(repo repositories.RepoSupplier) AppController {
 	return &appController{
-		appRepo: repo,
+		repoSupplier: repo,
 	}
 }
 
 func (controller *appController) List(ctx *gin.Context) {
-	apps, err := controller.appRepo.AppRepository().List()
+	apps, err := controller.repoSupplier.AppRepository().List()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -47,10 +48,32 @@ func (controller *appController) Create(ctx *gin.Context) {
 	}
 
 	app := credential.ToAppModel()
-	controller.appRepo.AppRepository().Create(&app)
+	controller.repoSupplier.AppRepository().Create(&app)
 	ctx.JSON(200, gin.H{
 		"nice": "nice",
 	})
+}
+
+func (controller *appController) Delete(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(400, gin.H{
+			"error": "Missing ID parameter",
+		})
+		return
+	}
+
+	deleted := controller.repoSupplier.AppRepository().Delete(id)
+
+	if !deleted {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": "App not found or could not be deleted",
+		})
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
 }
 
 func (service *appController) Hello(ctx *gin.Context) {
