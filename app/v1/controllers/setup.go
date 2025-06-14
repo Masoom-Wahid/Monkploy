@@ -4,6 +4,7 @@ import "platform/app/v1/repositories"
 
 type ControllerSupplier interface {
 	AppController() AppController
+	ServiceController() ServiceController
 }
 
 type controllerSupplier struct {
@@ -16,4 +17,8 @@ func NewControllerSupplier(repoSupplier *repositories.RepoSupplier) ControllerSu
 
 func (c *controllerSupplier) AppController() AppController {
 	return NewAppController(*c.repoSupplier)
+}
+
+func (c *controllerSupplier) ServiceController() ServiceController {
+	return NewServiceController(*c.repoSupplier)
 }

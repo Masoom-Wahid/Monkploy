@@ -11,5 +11,6 @@ func SetUpRoutes(router *gin.RouterGroup, cs controllers.ControllerSupplier, ms 
 	v1 := router.Group("/api/v1")
 
 	setupAppRoutes(v1, cs.AppController(), ms)
+	setupServiceRoutes(v1, cs.ServiceController(), ms)
 
 }

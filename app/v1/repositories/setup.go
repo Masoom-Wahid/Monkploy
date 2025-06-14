@@ -4,6 +4,7 @@ import "platform/config"
 
 type RepoSupplier interface {
 	AppRepository() AppRepository
+	ServiceRepository() ServiceRepository
 }
 
 type repoSupplier struct {
@@ -18,4 +19,9 @@ func NewRepoSupplier(config config.Config) RepoSupplier {
 
 func (r *repoSupplier) AppRepository() AppRepository {
 	return NewAppRepository()
+}
+
+
+func (r *repoSupplier) ServiceRepository() ServiceRepository {
+	return NewServiceRepository()
 }

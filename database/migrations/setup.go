@@ -9,4 +9,5 @@ import (
 func Migrate(db *gorm.DB) {
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
 	db.AutoMigrate(&models.App{})
+	db.AutoMigrate(&models.Service{})
 }

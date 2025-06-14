@@ -55,7 +55,7 @@ func (controller *appController) Create(ctx *gin.Context) {
 }
 
 func (controller *appController) Delete(ctx *gin.Context) {
-	id := ctx.Param("id")
+	id := ctx.Param("appId")
 
 	if id == "" {
 		ctx.JSON(400, gin.H{

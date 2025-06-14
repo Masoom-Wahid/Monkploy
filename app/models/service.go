@@ -8,13 +8,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type App struct {
-	ID        uuid.UUID      `gorm:"primaryKey" json:"id,omitempty"`
+type Service struct {
+	ID        uuid.UUID        `gorm:"primaryKey" json:"id,omitempty"`
 	Name        string         `gorm:"not null" json:"name,omitempty"`
 	Description string         `gorm:"type:text" json:"description,omitempty"`
+	Type        string    	   `gorm:"type:varchar(50);not null" json:"type,omitempty"`
+
+
 
 	// Relations
-	Service []Service
+	AppID  uuid.UUID 
 
 	CreatedAt time.Time      `json:"created_at,omitempty"`
 	UpdatedAt time.Time      `json:"updated_at,omitempty"`
@@ -22,13 +25,13 @@ type App struct {
 }
 
 
-func (app *App) BeforeCreate(tx *gorm.DB) (err error) {
-	app.ID = uuid.New()
+func (s *Service) BeforeCreate(tx *gorm.DB) (err error) {
+	s.ID = uuid.New()
 	return
 }
 
-func (app *App) ToString() string {
-	data, err := json.Marshal(app)
+func (s *Service) ToString() string {
+	data, err := json.Marshal(s)
 	if err != nil {
 		return "error"
 	}
