@@ -3,7 +3,6 @@ package app
 import (
 	"platform/app/v1/controllers"
 	"platform/app/v1/repositories"
-	"platform/app/v1/services"
 	"platform/config"
 	"platform/database"
 	"platform/database/migrations"
@@ -21,11 +20,10 @@ type AppEntity interface {
 }
 
 type App struct {
-	DAO         repositories.DAO
-	Services    services.Supplier
-	Controllers controllers.ControllerSupplier
-	Middlewares middlewares.MiddlewareSupplier
-	Database    *gorm.DB
+	RepoSupplier repositories.RepoSupplier
+	Controllers  controllers.ControllerSupplier
+	Middlewares  middlewares.MiddlewareSupplier
+	Database     *gorm.DB
 	// routes 	routes.Routes
 	Config config.Config
 }
@@ -37,17 +35,13 @@ func NewApp() AppEntity {
 
 	config := config.NewConfig()
 
-	dao := repositories.NewDAO(config)
-	println("before services")
-	services := services.NewServiceSupplier(dao, config)
-	println("after services")
-	controllers := controllers.NewControllerSupplier(services)
-	middlewares := middlewares.NewMiddlewareSupplier(services)
+	repoSupplier := repositories.NewRepoSupplier(config)
+	controllers := controllers.NewControllerSupplier(&repoSupplier)
+	middlewares := middlewares.NewMiddlewareSupplier()
 
 	app := new(App)
-	app.DAO = dao
+	app.RepoSupplier = repoSupplier
 	app.Database = database
-	app.Services = services
 	app.Controllers = controllers
 	app.Middlewares = middlewares
 	app.Config = config
@@ -65,7 +59,7 @@ func (app *App) Run() {
 	if app.Config.AppConfig().Env == "development" {
 		migrations.Migrate(app.Database)
 
-		seederSupplier := seeder.NewSeederSupplier(app.Services)
+		seederSupplier := seeder.NewSeederSupplier()
 		seederSupplier.Run()
 	}
 

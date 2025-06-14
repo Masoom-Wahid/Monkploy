@@ -2,7 +2,6 @@ package seeder
 
 import (
 	"platform/app/models"
-	"platform/app/v1/services"
 	"platform/database"
 )
 
@@ -11,22 +10,19 @@ type AppSeeder interface {
 }
 
 type appSeeder struct {
-	services services.Supplier
 }
 
-func NewAppSeeder(services services.Supplier) AppSeeder {
-	return &appSeeder{
-		services: services,
-	}
+func NewAppSeeder() AppSeeder {
+	return &appSeeder{}
 }
 
 func (u *appSeeder) SeedApps() {
 	db := database.GetDB()
 
-	user := models.App{
-		Name: "Backend Api",
+	testApp := models.App{
+		Name:        "Backend Api",
 		Description: "Anthoer App",
 	}
 
-	db.Model(&user).Create(&user)
+	db.Model(&models.App{}).Create(&testApp)
 }

@@ -1,20 +1,19 @@
 package controllers
 
-import (
-	"platform/app/v1/services"
-)
+import "platform/app/v1/repositories"
 
 type ControllerSupplier interface {
-
+	AppController() AppController
 }
 
 type controllerSupplier struct {
-	services services.Supplier
+	repoSupplier *repositories.RepoSupplier
 }
 
-func NewControllerSupplier(services services.Supplier) ControllerSupplier {
-	return &controllerSupplier{
-		services: services,
-	}
+func NewControllerSupplier(repoSupplier *repositories.RepoSupplier) ControllerSupplier {
+	return &controllerSupplier{repoSupplier: repoSupplier}
 }
 
+func (c *controllerSupplier) AppController() AppController {
+	return NewAppController(*c.repoSupplier)
+}

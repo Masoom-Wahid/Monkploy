@@ -11,7 +11,7 @@ import (
 var DB *gorm.DB
 
 func Connect() *gorm.DB {
-	host := env.GetEnv("DB_HOST", "localhost")
+	host := env.GetEnv("DB_HOST", "db")
 	port := env.GetEnv("DB_PORT", "5432")
 	user := env.GetEnv("DB_USER", "postgres")
 	password := env.GetEnv("DB_PASSWORD", "postgres")
