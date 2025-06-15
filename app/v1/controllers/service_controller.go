@@ -26,7 +26,7 @@ func NewServiceController(repo repositories.RepoSupplier) ServiceController {
 }
 
 func (controller *serviceController) List(ctx *gin.Context) {
-	appId := ctx.Param("appId")
+	appId := ctx.Query("appId")
 
 	apps, err := controller.repoSupplier.ServiceRepository().List(appId)
 	if err != nil {
@@ -37,7 +37,6 @@ func (controller *serviceController) List(ctx *gin.Context) {
 }
 
 func (controller *serviceController) Create(ctx *gin.Context) {
-	appId := ctx.Param("appId")
 
 	var credential requests.ServiceRequest
 	ctx.ShouldBind(&credential)
@@ -51,7 +50,7 @@ func (controller *serviceController) Create(ctx *gin.Context) {
 	}
 
 	service := credential.ToServiceModel()
-	_, err := controller.repoSupplier.ServiceRepository().Create(&service, appId)
+	_, err := controller.repoSupplier.ServiceRepository().Create(&service, credential.AppId)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"errors": err.Error(),
@@ -87,5 +86,3 @@ func (controller *serviceController) Delete(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNoContent)
 }
-
-

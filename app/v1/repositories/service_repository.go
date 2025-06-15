@@ -23,7 +23,11 @@ func NewServiceRepository() *serviceRepository {
 func (s *serviceRepository) List(appId string) ([]models.Service, error) {
 	db := database.GetDB()
 	var services []models.Service
-	err := db.Model(&models.Service{}).Where("app_id = ?", appId).Order("id asc").Find(&services).Error
+	query := db.Model(&models.Service{}).Order("id asc")
+	if appId != "" {
+		query = query.Where("app_id = ?", appId)
+	}
+	err := query.Find(&services).Error
 	return services, err
 }
 
@@ -39,13 +43,12 @@ func (r *serviceRepository) Create(s *models.Service, appId string) (*gorm.DB, e
 	s.AppID = app.ID
 
 	result := db.Model(&models.Service{}).Create(s)
-	
+
 	return result, result.Error
 }
 
 func (r *serviceRepository) Delete(id string, appId string) error {
 	db := database.GetDB()
-	
 
 	var app models.App
 	if err := db.Where("id = ?", appId).First(&app).Error; err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 func setupServiceRoutes(route *gin.RouterGroup, serviceController controllers.ServiceController, ms middlewares.MiddlewareSupplier) {
-	services := route.Group("/apps/:appId/services")
+	services := route.Group("services")
 
 	services.GET("/", serviceController.List)
 	services.POST("/", serviceController.Create)
